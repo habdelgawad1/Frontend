@@ -23,13 +23,13 @@
                 </div>
 
                 <div class="form-group">
-                    <label>Date</label>
-                    <input type="date" id="bookingDate" required>
+                    <label>UserID</label>
+                    <input type="text" id="bookingUserID" required>
                 </div>
 
                 <div class="form-group">
-                    <label>Time</label>
-                    <input type="time" id="bookingTime" required>
+                    <label>TourID</label>
+                    <input type="text" id="bookingTourID" required>
                 </div>
 
                 <div class="form-group">
@@ -38,27 +38,13 @@
                 </div>
 
                 <div class="form-group">
-                    <label>Special Requests</label>
-                    <textarea id="specialRequests" rows="3"></textarea>
-                </div>
-
-                <div class="form-group">
                     <label>Payment Method</label>
                     <div>
                         <input type="radio" name="payment" value="cash" id="payCash" checked>
                         <label for="payCash">Cash</label>
-                        
                         <input type="radio" name="payment" value="points" id="payPoints">
                         <label for="payPoints">Points</label>
                     </div>
-                </div>
-
-                <div class="summary-box">
-                    <h3>Summary</h3>
-                    <p><strong>Tour:</strong> <span id="summaryTour">-</span></p>
-                    <p><strong>Date:</strong> <span id="summaryDate">-</span></p>
-                    <p><strong>Tickets:</strong> <span id="summaryTickets">-</span></p>
-                    <p><strong>Total:</strong> <span id="summaryTotal">$0.00</span></p>
                 </div>
 
                 <button type="submit" class="submit-btn">Confirm Booking</button>
