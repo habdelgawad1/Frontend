@@ -1,10 +1,11 @@
-document.getElementById("loginForm").addEventListener("submit", async(e) => {
+document.getElementById("loginForm").addEventListener("submit", async (e) => {
     e.preventDefault();
 
     const email = document.getElementById("loginEmail").value.trim();
     const password = document.getElementById("loginPassword").value.trim();
 
     let valid = true;
+    
     if (!email.includes("@")) {
         document.getElementById("loginEmailErr").innerText = "Invalid Email Format";
         valid = false;
@@ -22,18 +23,18 @@ document.getElementById("loginForm").addEventListener("submit", async(e) => {
     if (!valid) return;
 
     try {
-        const res = await fetch("http://localhost:4423/api/v1/auth/login", {
+        const res = await fetch(API_ENDPOINTS.auth.login, {
             method: "POST",
-            headers: { "Content-Type": "application/json"},
+            headers: { "Content-Type": "application/json" },
             credentials: "include",
-            body: JSON.stringify({ email, password})
+            body: JSON.stringify({ email, password })
         });
 
         const data = await res.json();
         if (res.ok) {
-            alert(data.message);
+            alert(data.message || "Login successful!");
             if (data.token) {
-                localStorage.setItem('authToken', data.token);
+                setAuthToken(data.token);
             }
             window.location.href = "index.html";
         } else {
