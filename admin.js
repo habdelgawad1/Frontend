@@ -4,9 +4,6 @@ document.addEventListener('DOMContentLoaded', function() {
         window.location.href = 'login.html';
         return;
     }
-    
-    setupForms();
-    loadTours();
 });
 
 function showTab(tabName) {
@@ -25,173 +22,157 @@ function showTab(tabName) {
     event.target.classList.add('active');
 }
 
-function setupForms() {
-    document.getElementById('createTourForm').addEventListener('submit', handleCreateTour);
-    document.getElementById('addAdminForm').addEventListener('submit', handleAddAdmin);
-}
-
-async function handleCreateTour(e) {
+document.getElementById("createTourForm").addEventListener("submit", async (e) => {
     e.preventDefault();
-    
-    const tourData = {
-        name: document.getElementById('tourName').value.trim(),
-        guide: document.getElementById('tourGuide').value.trim(),
-        duration: document.getElementById('tourDuration').value.trim(),
-        language: document.getElementById('tourLanguage').value.trim(),
-        price: parseFloat(document.getElementById('tourPrice').value),
-        maxCapacity: parseInt(document.getElementById('tourCapacity').value),
-        description: document.getElementById('tourDescription').value.trim()
-    };
-    
-    console.log('Creating tour with data:', tourData);
-    
-    try {
-        const response = await fetchWithAuth(API_ENDPOINTS.admin.tours, {
-            method: 'POST',
-            body: JSON.stringify(tourData)
-        });
-        
-        if (!response) return;
-        
-        if (response.ok) {
-            const result = await response.json();
-            console.log('Tour created:', result);
-            alert('Tour created successfully!');
-            document.getElementById('createTourForm').reset();
-            loadTours();
-        } else {
-            const error = await response.json();
-            console.error('Create tour error:', error);
-            alert('Failed to create tour: ' + (error.message || error.error || 'Unknown error'));
-        }
-    } catch (error) {
-        console.error('Error creating tour:', error);
-        alert('Error creating tour. Please try again.');
-    }
-}
 
-async function loadTours() {
-    const container = document.getElementById('toursContainer');
-    
-    try {
-        container.innerHTML = '<p class="loading">Loading tours...</p>';
-        
-        const response = await fetch(API_ENDPOINTS.tours.all);
-        
-        if (!response.ok) {
-            throw new Error('Failed to fetch tours');
-        }
-        
-        const data = await response.json();
-        console.log('Admin tours data:', data);
-        
-        const tours = data.tours || data.data || data || [];
-        
-        if (tours.length === 0) {
-            container.innerHTML = '<p class="loading">No tours available</p>';
-            return;
-        }
-        
-        displayTours(tours);
-    } catch (error) {
-        console.error('Error loading tours:', error);
-        container.innerHTML = '<p class="loading">Failed to load tours</p>';
-    }
-}
+    const guideID = document.getElementById("tourGuide").value.trim();
+    const title = document.getElementById("tourName").value.trim();
+    const description = document.getElementById("tourDescription").value.trim();
+    const duration = document.getElementById("tourDuration").value.trim();
+    const language = document.getElementById("tourLanguage").value.trim();
+    const price = document.getElementById("tourPrice").value.trim();
+    const capacity = document.getElementById("tourCapacity").value.trim();
 
-function displayTours(tours) {
-    const container = document.getElementById('toursContainer');
-    let html = '';
-    
-    for (let i = 0; i < tours.length; i++) {
-        const tour = tours[i];
-        const tourId = tour.id || tour._id;
-        const tourName = tour.name || tour.title || 'Unnamed Tour';
-        const tourGuide = tour.guide || tour.guideName || 'N/A';
-        const tourDuration = tour.duration || 'N/A';
-        const tourPrice = tour.price || 0;
-        const tourCapacity = tour.maxCapacity || tour.capacity || 'N/A';
-        const tourLanguage = tour.language || 'N/A';
-        
-        html += '<div class="tour-card">';
-        html += '<h3>' + tourName + '</h3>';
-        html += '<p><strong>Guide:</strong> ' + tourGuide + '</p>';
-        html += '<p><strong>Duration:</strong> ' + tourDuration + '</p>';
-        html += '<p><strong>Language:</strong> ' + tourLanguage + '</p>';
-        html += '<p><strong>Price:</strong> $' + tourPrice + '</p>';
-        html += '<p><strong>Capacity:</strong> ' + tourCapacity + '</p>';
-        html += '<button class="btn-edit" onclick="editTour(\'' + tourId + '\')">Edit</button>';
-        html += '<button class="btn-delete" onclick="deleteTour(\'' + tourId + '\')">Delete</button>';
-        html += '</div>';
-    }
-    
-    container.innerHTML = html;
-}
-
-function editTour(tourId) {
-    alert('Edit functionality - Tour ID: ' + tourId + '\n\nNote: Edit feature needs to be implemented with a form to update tour details.');
-}
-
-async function deleteTour(tourId) {
-    if (!confirm('Are you sure you want to delete this tour?')) {
+    if (!guideID || !title || !duration || !language || !price || !capacity) {
+        alert("All fields are required");
         return;
     }
-    
-    console.log('Deleting tour:', tourId);
-    
+
+    const times = duration.split('-');
+    const startTime = times[0] ? times[0].trim() + ':00' : '09:00:00';
+    const endTime = times[1] ? times[1].trim() + ':00' : '11:00:00';
+
     try {
-        const response = await fetchWithAuth(API_ENDPOINTS.admin.tours, {
-            method: 'DELETE',
-            body: JSON.stringify({ id: tourId })
+        const res = await fetch(API_ENDPOINTS.admin.tours, {
+            method: "POST",
+            headers: { 
+                "Content-Type": "application/json",
+                "Authorization": "Bearer " + getAuthToken()
+            },
+            body: JSON.stringify({
+                guideID: parseInt(guideID),
+                title: title,
+                description: description,
+                startTime: startTime,
+                endTime: endTime,
+                date: new Date().toISOString().split('T')[0],
+                maxParticipants: parseInt(capacity),
+                availableSpots: parseInt(capacity),
+                price: parseFloat(price),
+                language: language
+            })
         });
-        
-        if (!response) return;
-        
-        if (response.ok) {
-            alert('Tour deleted successfully!');
-            loadTours();
+
+        const data = await res.json();
+        if (res.ok) {
+            alert(data.message || "Tour created successfully!");
+            document.getElementById("createTourForm").reset();
         } else {
-            const error = await response.json();
-            console.error('Delete tour error:', error);
-            alert('Failed to delete tour: ' + (error.message || error.error || 'Unknown error'));
+            alert(data.message || data.error || "Tour creation failed");
         }
-    } catch (error) {
-        console.error('Error deleting tour:', error);
-        alert('Error deleting tour. Please try again.');
+    } catch (err) {
+        console.log(err);
+        alert("Could not connect to server. Try again later.");
+    }
+});
+
+document.getElementById("addAdminForm").addEventListener("submit", async (e) => {
+    e.preventDefault();
+
+    const name = document.getElementById("adminName").value.trim();
+    const email = document.getElementById("adminEmail").value.trim();
+    const password = document.getElementById("adminPassword").value.trim();
+
+    if (!name || !email || !password) {
+        alert("All fields are required");
+        return;
+    }
+
+    try {
+        const res = await fetch(API_ENDPOINTS.admin.admins, {
+            method: "POST",
+            headers: { 
+                "Content-Type": "application/json",
+                "Authorization": "Bearer " + getAuthToken()
+            },
+            body: JSON.stringify({
+                name: name,
+                email: email,
+                password: password,
+                phone: '0000000000'
+            })
+        });
+
+        const data = await res.json();
+        if (res.ok) {
+            alert(data.message || "Admin created successfully!");
+            document.getElementById("addAdminForm").reset();
+        } else {
+            alert(data.message || data.error || "Admin creation failed");
+        }
+    } catch (err) {
+        console.log(err);
+        alert("Could not connect to server. Try again later.");
+    }
+});
+
+async function deleteTour(tourID) {
+    if (!confirm("Are you sure you want to delete this tour?")) {
+        return;
+    }
+
+    try {
+        const res = await fetch(API_ENDPOINTS.admin.tourById(tourID), {
+            method: "DELETE",
+            headers: { 
+                "Content-Type": "application/json",
+                "Authorization": "Bearer " + getAuthToken()
+            }
+        });
+
+        const data = await res.json();
+        if (res.ok) {
+            alert(data.message || "Tour deleted successfully!");
+            window.location.reload();
+        } else {
+            alert(data.message || data.error || "Delete failed");
+        }
+    } catch (err) {
+        console.log(err);
+        alert("Could not connect to server. Try again later.");
     }
 }
 
-async function handleAddAdmin(e) {
-    e.preventDefault();
+async function updateTourStatus(tourID) {
+    const newStatus = prompt("Enter new status (scheduled, ongoing, completed, canceled):");
     
-    const adminData = {
-        name: document.getElementById('adminName').value.trim(),
-        email: document.getElementById('adminEmail').value.trim(),
-        password: document.getElementById('adminPassword').value,
-    };
+    if (!newStatus) return;
     
-    console.log('Creating admin user with data:', adminData);
-    
+    const validStatuses = ['scheduled', 'ongoing', 'completed', 'canceled'];
+    if (!validStatuses.includes(newStatus.toLowerCase())) {
+        alert("Invalid status");
+        return;
+    }
+
     try {
-        const response = await fetchWithAuth(API_ENDPOINTS.admin.users, {
-            method: 'POST',
-            body: JSON.stringify(adminData)
+        const res = await fetch(API_ENDPOINTS.admin.tourById(tourID), {
+            method: "PUT",
+            headers: { 
+                "Content-Type": "application/json",
+                "Authorization": "Bearer " + getAuthToken()
+            },
+            body: JSON.stringify({ TourStatus: newStatus })
         });
-        
-        if (!response) return;
-        
-        if (response.ok) {
-            const result = await response.json();
-            console.log('Admin created:', result);
-            alert('Admin user created successfully!');
-            document.getElementById('addAdminForm').reset();
+
+        const data = await res.json();
+        if (res.ok) {
+            alert(data.message || "Tour status updated successfully!");
+            window.location.reload();
         } else {
-            const error = await response.json();
-            console.error('Create admin error:', error);
-            alert('Failed to create admin: ' + (error.message || error.error || 'Unknown error'));
+            alert(data.message || data.error || "Update failed");
         }
-    } catch (error) {
-        console.error('Error creating admin:', error);
-        alert('Error creating admin. Please try again.');
+    } catch (err) {
+        console.log(err);
+        alert("Could not connect to server. Try again later.");
     }
 }

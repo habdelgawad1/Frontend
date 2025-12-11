@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Museum - Book Tickets</title>
+    <title>Egyptian Museum - Book Tickets</title>
     <link rel="stylesheet" href="tickets.css">
 </head>
 <body>
@@ -15,15 +15,14 @@
         <div class="form-section">
             <h2>Booking Form</h2>
             <form id="bookingForm">
-
                 <div class="form-group">
-                    <label>UserID</label>
-                    <input type="text" id="bookingUserID" required>
+                    <label>Your User ID</label>
+                    <input type="number" id="bookingUserID" required>
                 </div>
 
                 <div class="form-group">
-                    <label>TourID</label>
-                    <input type="text" id="bookingTourID" required>
+                    <label>Tour ID</label>
+                    <input type="number" id="bookingTourID" required>
                 </div>
 
                 <div class="form-group">
@@ -43,11 +42,6 @@
 
                 <button type="submit" class="submit-btn">Confirm Booking</button>
             </form>
-        </div>
-
-        <div class="bookings-section">
-            <h2>My Bookings</h2>
-            <div id="bookingsContainer" class="loading">Loading bookings...</div>
         </div>
     </div>
 

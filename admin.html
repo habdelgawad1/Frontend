@@ -26,13 +26,13 @@
                 </div>
 
                 <div class="form-group">
-                    <label>Guide Name</label>
-                    <input type="text" id="tourGuide" required>
+                    <label>Guide ID (User ID of guide)</label>
+                    <input type="number" id="tourGuide" required>
                 </div>
 
                 <div class="form-group">
-                    <label>Duration</label>
-                    <input type="text" id="tourDuration" placeholder="e.g., 2 hours" required>
+                    <label>Duration (e.g., 09:00-11:00)</label>
+                    <input type="text" id="tourDuration" placeholder="09:00-11:00" required>
                 </div>
 
                 <div class="form-group">
@@ -57,15 +57,11 @@
 
                 <button type="submit" class="submit-btn">Create Tour</button>
             </form>
-
-            <h2>Existing Tours</h2>
-            <div id="toursContainer" class="loading">Loading tours...</div>
         </div>
 
         <div id="usersTab" class="tab-content">
             <h2>Add Admin User</h2>
             <form id="addAdminForm">
-
                 <div class="form-group">
                     <label>Name</label>
                     <input type="text" id="adminName" required>
@@ -77,8 +73,8 @@
                 </div>
 
                 <div class="form-group">
-                    <label>Password</label>
-                    <input type="password" id="adminPassword" minlength="6" required>
+                    <label>Password (min 8 characters)</label>
+                    <input type="password" id="adminPassword" minlength="8" required>
                 </div>
 
                 <button type="submit" class="submit-btn">Add Admin</button>

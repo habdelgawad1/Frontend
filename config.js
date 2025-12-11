@@ -6,19 +6,31 @@ const API_ENDPOINTS = {
         login: API_BASE_URL + '/api/v1/auth/login'
     },
     users: {
-        profile: API_BASE_URL + '/api/v1/users/profile',
-        updatePassword: API_BASE_URL + '/api/v1/users/profile/password'
+        profile: function(userID) {
+            return API_BASE_URL + '/api/v1/users/profile/' + userID;
+        },
+        update: API_BASE_URL + '/api/v1/users/update',
+        delete: API_BASE_URL + '/api/v1/users/delete'
     },
     tours: {
         all: API_BASE_URL + '/api/v1/tours',
         byId: function(id) {
             return API_BASE_URL + '/api/v1/tours/' + id;
+        },
+        byGuide: function(guideId) {
+            return API_BASE_URL + '/api/v1/tours/guide/' + guideId;
         }
     },
     bookings: {
         all: API_BASE_URL + '/api/v1/bookings',
         create: API_BASE_URL + '/api/v1/bookings',
         byId: function(id) {
+            return API_BASE_URL + '/api/v1/bookings/' + id;
+        },
+        update: function(id) {
+            return API_BASE_URL + '/api/v1/bookings/' + id;
+        },
+        cancel: function(id) {
             return API_BASE_URL + '/api/v1/bookings/' + id;
         },
         payCash: function(id) {
@@ -30,15 +42,19 @@ const API_ENDPOINTS = {
     },
     reviews: {
         byTour: function(tourId) {
-            return API_BASE_URL + '/api/v1/tours/' + tourId + '/reviews';
+            return API_BASE_URL + '/api/v1/reviews/' + tourId;
         },
-        create: function(tourId) {
-            return API_BASE_URL + '/api/v1/tours/' + tourId + '/reviews';
-        }
+        create: API_BASE_URL + '/api/v1/reviews'
     },
     admin: {
-        users: API_BASE_URL + '/api/v1/admin/users',
-        tours: API_BASE_URL + '/api/v1/admin/tours'
+        tours: API_BASE_URL + '/api/v1/admin/tours',
+        tourById: function(id) {
+            return API_BASE_URL + '/api/v1/admin/tours/' + id;
+        },
+        admins: API_BASE_URL + '/api/v1/admin/admins',
+        adminById: function(id) {
+            return API_BASE_URL + '/api/v1/admin/admins/' + id;
+        }
     }
 };
 
